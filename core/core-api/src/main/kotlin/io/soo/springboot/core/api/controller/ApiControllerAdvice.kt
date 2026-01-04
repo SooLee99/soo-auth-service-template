@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.validation.BindException
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
@@ -349,22 +350,22 @@ class ApiControllerAdvice {
         )
     }
 
-//    // 401: 인증 실패 (Spring Security)
-//    @ExceptionHandler(AuthenticationException::class)
-//    fun handleAuthenticationException(
-//        e: AuthenticationException,
-//        req: HttpServletRequest,
-//    ): ResponseEntity<ApiResponse<Any>> {
-//        val now = LocalDateTime.now()
-//        return respond(
-//            ErrorType.UNAUTHORIZED,
-//            req,
-//            userMessage = "인증에 실패했습니다.",
-//            detail = e.message,
-//            timestamp = now,
-//        )
-//    }
-//
+    // 401: 인증 실패 (Spring Security)
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(
+        e: AuthenticationException,
+        req: HttpServletRequest,
+    ): ResponseEntity<ApiResponse<Any>> {
+        val now = LocalDateTime.now()
+        return respond(
+            ErrorType.UNAUTHORIZED,
+            req,
+            userMessage = "인증에 실패했습니다.",
+            detail = e.message,
+            timestamp = now,
+        )
+    }
+
 //    // 403: 인가 실패 (Spring Security)
 //    @ExceptionHandler(SecurityAccessDeniedException::class)
 //    fun handleSecurityAccessDenied(
