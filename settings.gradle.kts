@@ -1,4 +1,4 @@
-rootProject.name = "spring-boot-kotlin-template"
+rootProject.name = "auth-service-template"
 
 include(
     "core:core-enum",
