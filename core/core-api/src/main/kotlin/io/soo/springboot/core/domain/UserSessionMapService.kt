@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Service
 class UserSessionMapService(
-    private val repo: UserSessionMapRepository,
+    private val userSessionMapRepository: UserSessionMapRepository,
 ) {
     companion object {
         private const val MAX_SESSION_ID = 100
@@ -28,7 +28,7 @@ class UserSessionMapService(
         val sid = normSessionId(sessionId)
         val did = normDeviceId(deviceId)
 
-        val entity = repo.lockBySessionId(sid)
+        val entity = userSessionMapRepository.lockBySessionId(sid)
             ?: UserSessionMapEntity(
                 sessionId = sid,
                 userId = userId,
@@ -47,53 +47,33 @@ class UserSessionMapService(
         entity.revokedAt = null
         entity.revokedReason = null
 
-        repo.save(entity)
+        userSessionMapRepository.save(entity)
     }
 
     fun findActive(sessionId: String): UserSessionMapEntity? =
-        repo.findBySessionIdAndRevokedAtIsNull(normSessionId(sessionId))
+        userSessionMapRepository.findBySessionIdAndRevokedAtIsNull(normSessionId(sessionId))
 
     @Transactional
     fun touch(sessionId: String) {
         val sid = normSessionId(sessionId)
-        val m = repo.lockBySessionId(sid) ?: return
+        val m = userSessionMapRepository.lockBySessionId(sid) ?: return
         if (m.revokedAt != null) return
 
         m.lastAccessedAt = LocalDateTime.now()
-        repo.save(m)
+        userSessionMapRepository.save(m)
     }
 
-    fun activeSessionIds(userId: Long, deviceId: String? = null): List<String> =
-        if (deviceId.isNullOrBlank())
-            repo.findActiveSessionIdsByUserId(userId)
-        else
-            repo.findActiveSessionIdsByUserIdAndDeviceId(userId, normDeviceId(deviceId))
 
+    /**
+     * ✅ 세션 revoke(멱등)
+     */
     @Transactional
-    fun revokeSession(sessionId: String, reason: String?) {
-        val sid = normSessionId(sessionId)
-        val m = repo.lockBySessionId(sid) ?: return
-        if (m.revokedAt != null) return
+    fun revoke(sessionId: String, reason: String?) {
+        val m = userSessionMapRepository.findBySessionId(sessionId) ?: return
 
+        if (m.revokedAt != null) return
         m.revokedAt = LocalDateTime.now()
         m.revokedReason = reason
-        repo.save(m)
+        userSessionMapRepository.save(m)
     }
-
-    @Transactional
-    fun revokeAll(userId: Long, deviceId: String? = null, reason: String?) {
-        val list = if (deviceId.isNullOrBlank())
-            repo.findAllByUserIdAndRevokedAtIsNull(userId)
-        else
-            repo.findAllByUserIdAndDeviceIdAndRevokedAtIsNull(userId, normDeviceId(deviceId))
-
-        val now = LocalDateTime.now()
-        list.forEach {
-            it.revokedAt = now
-            it.revokedReason = reason
-        }
-        repo.saveAll(list)
-    }
-
-    fun getBinding(sessionId: String): UserSessionMapEntity? = findActive(sessionId)
 }

@@ -6,9 +6,11 @@ import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 
 @Configuration
-class SecurityContextConfig {
+class SecurityContextRepoConfig {
 
     @Bean
-    fun securityContextRepository(): SecurityContextRepository =
-        HttpSessionSecurityContextRepository()
+    fun securityContextRepository(): SecurityContextRepository {
+        // ✅ 세션(HttpSession)에 SecurityContext를 저장/복원하는 기본 구현체
+        return HttpSessionSecurityContextRepository()
+    }
 }

@@ -10,8 +10,7 @@ import org.springframework.data.repository.query.Param
 interface OAuthIdentityRepository : JpaRepository<OAuthIdentityEntity, Long> {
 
     fun findAllByUserId(userId: Long): List<OAuthIdentityEntity>
-    fun findAllByProvider(provider: AuthProvider): List<OAuthIdentityEntity>
-    fun findByProviderAndProviderUserId(provider: AuthProvider, providerUserId: String): OAuthIdentityEntity?
+    fun findAllByUserIdIn(userIds: Collection<Long>): List<OAuthIdentityEntity>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(

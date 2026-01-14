@@ -12,5 +12,5 @@ data class AdminUserSummaryDto(
     val updatedAt: LocalDateTime,
     val providers: List<AuthProvider>,
     val deviceCount: Int,
-    val activeSessionCount: Long,
+    val activeSessionCount: Int,
 )

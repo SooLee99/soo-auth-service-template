@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 class LoginAttemptService(
     private val loginAttemptRepository: LoginAttemptRepository,
 ) {
+
     @Transactional
     fun record(
         success: Boolean,
@@ -37,6 +38,7 @@ class LoginAttemptService(
         )
     }
 
+    // 특정 유저의 최근 로그인 시도 조회
     fun recent(userId: Long): List<LoginAttemptEntity> =
         loginAttemptRepository.findTop50ByUserIdOrderByCreatedAtDesc(userId)
 }

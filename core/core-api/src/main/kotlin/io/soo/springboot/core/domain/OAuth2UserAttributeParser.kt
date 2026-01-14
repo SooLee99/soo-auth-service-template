@@ -41,7 +41,6 @@ class OAuth2UserAttributeParser {
             "kakao" -> {
                 val kakaoAccount = attrs["kakao_account"] as? Map<*, *>
                 val profile = kakaoAccount?.get("profile") as? Map<*, *>
-                // 카카오는 profile_image_url / thumbnail_image_url 둘 다 올 수 있음
                 (profile?.get("profile_image_url") ?: profile?.get("thumbnail_image_url"))?.toString()
             }
             "naver" -> (attrs["response"] as? Map<*, *>)?.get("profile_image")?.toString()

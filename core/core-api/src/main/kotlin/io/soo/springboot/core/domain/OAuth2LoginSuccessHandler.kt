@@ -4,8 +4,6 @@ import io.soo.springboot.core.enums.AuthProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.session.Session
@@ -20,7 +18,6 @@ class OAuth2LoginSuccessHandler(
     private val userDeviceService: UserDeviceService,
     private val sessionMapService: UserSessionMapService,
     private val deviceBlockService: DeviceBlockService,
-    private val authorizedClientService: OAuth2AuthorizedClientService,
     private val sessionRepository: SessionRepository<out Session>,
 
 ) : AuthenticationSuccessHandler {
@@ -60,7 +57,7 @@ class OAuth2LoginSuccessHandler(
         val ua = request.getHeader("User-Agent")
 
         // 1) provider 사용자 → 우리 userId 업서트
-        val (userId, providerUserId) = userAccountService.upsertFromOAuth2(token)
+        val (userId, providerUserId) = userAccountService.upsertFromOAuth2(token, request)
 
         // 2) 디바이스 차단 체크
         if (deviceBlockService.isBlocked(userId, deviceId)) {

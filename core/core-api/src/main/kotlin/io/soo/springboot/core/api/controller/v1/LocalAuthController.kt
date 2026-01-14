@@ -1,52 +1,62 @@
 package io.soo.springboot.core.api.controller.v1
 
-import io.soo.springboot.core.api.controller.v1.request.LoginRequest
-import io.soo.springboot.core.api.controller.v1.response.LoginResponse
+import io.soo.springboot.core.api.controller.v1.request.JwtLogoutRequest
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import io.soo.springboot.core.api.controller.v1.request.SignUpRequest
+import io.soo.springboot.core.api.controller.v1.response.SignUpResult
+import io.soo.springboot.core.domain.JwtDenylistService
 import io.soo.springboot.core.domain.LocalAuthService
 import io.soo.springboot.core.support.response.ApiResponse
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
 class LocalAuthController(
     private val localAuthService: LocalAuthService,
-) {
+    private val denylist: JwtDenylistService,
+    ) {
 
+    /**
+     * ✅ 회원가입
+     * POST /api/v1/auth/signup
+     */
     @PostMapping("/signup")
-    fun signUp(
-        @RequestBody req: SignUpRequest,
-        @RequestHeader(name = "X-Device-Id", required = false) deviceId: String?,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-    ): ApiResponse<LoginResponse> {
-        val r = localAuthService.signUpAndLogin(
+    fun signUp(@RequestBody @Valid req: SignUpRequest): ApiResponse<SignUpResult> {
+        val result = localAuthService.signUp(
             email = req.email,
             rawPassword = req.password,
+            name = req.name,
             nickname = req.nickname,
-            deviceId = deviceId,
-            request = request,
-            response = response,
+            profileImageUrl = req.profileImageUrl,
+            birthDate = req.birthDate,
         )
-        return ApiResponse.success(LoginResponse.from(r))
+        return ApiResponse.success(result)
     }
 
-    @PostMapping("/login")
-    fun login(
-        @RequestBody req: LoginRequest,
-        @RequestHeader(name = "X-Device-Id", required = false) deviceId: String?,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-    ): ApiResponse<LoginResponse> {
-        val r = localAuthService.login(
-            email = req.email,
-            rawPassword = req.password,
-            deviceId = deviceId,
-            request = request,
-            response = response,
+    /**
+     * ✅ JWT 로그아웃 = 현재 토큰을 denylist(블랙리스트)에 등록
+     * POST /api/v1/auth/jwt/logout
+     *
+     * - 인증된 요청이어야 함(Bearer 토큰 필요)
+     */
+    @PostMapping("/logout")
+    fun logout(
+        auth: JwtAuthenticationToken,
+        @RequestBody(required = false) req: JwtLogoutRequest?,
+    ): ApiResponse<Unit> {
+        val jwt = auth.token
+        val tokenValue = jwt.tokenValue
+        val jti = jwt.id
+        val expiresAt = jwt.expiresAt
+
+        denylist.revoke(
+            tokenValue = tokenValue,
+            jti = jti,
+            expiresAt = expiresAt,
+            reason = req?.reason,
         )
-        return ApiResponse.success(LoginResponse.from(r))
+
+        return ApiResponse.success(Unit)
     }
 }

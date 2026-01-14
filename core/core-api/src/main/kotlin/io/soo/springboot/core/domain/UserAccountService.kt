@@ -5,6 +5,7 @@ import io.soo.springboot.storage.db.core.OAuthIdentityEntity
 import io.soo.springboot.storage.db.core.OAuthIdentityRepository
 import io.soo.springboot.storage.db.core.UserAccountEntity
 import io.soo.springboot.storage.db.core.UserAccountRepository
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.stereotype.Service
@@ -21,7 +22,7 @@ class UserAccountService(
     }
 
     @Transactional
-    fun upsertFromOAuth2(token: OAuth2AuthenticationToken): Pair<Long, String> {
+    fun upsertFromOAuth2(token: OAuth2AuthenticationToken, request: HttpServletRequest): Pair<Long, String> {
         val info = extractUserInfo(token)
         val provider = info.provider
         val providerUserId = info.providerUserId.trim().take(MAX_PROVIDER_USER_ID)
@@ -41,7 +42,6 @@ class UserAccountService(
                     email = info.email,
                     nickname = info.nickname,
                     profileImageUrl = info.profileImageUrl,
-                    thumbnailImageUrl = info.thumbnailImageUrl,
                 )
             )
 
@@ -52,6 +52,7 @@ class UserAccountService(
                         userId = createdOrExisting.id,
                         provider = provider,
                         providerUserId = providerUserId,
+                        rawAttributesJson = request.toString()
                     )
                 )
             } catch (_: DataIntegrityViolationException) {
@@ -74,7 +75,6 @@ class UserAccountService(
         user.email = user.email ?: info.email
         user.nickname = info.nickname ?: user.nickname
         user.profileImageUrl = info.profileImageUrl ?: user.profileImageUrl
-        user.thumbnailImageUrl = info.thumbnailImageUrl ?: user.thumbnailImageUrl
         userAccountRepository.save(user)
 
         return user.id to providerUserId

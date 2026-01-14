@@ -17,4 +17,22 @@ interface UserDeviceRepository : JpaRepository<UserDeviceEntity, Long> {
         @Param("userId") userId: Long,
         @Param("deviceId") deviceId: String,
     ): UserDeviceEntity?
+
+    /**
+     * ✅ userId별 디바이스 개수 집계 (group by)
+     */
+    @Query(
+        """
+        select d.userId as userId, count(d) as cnt
+        from UserDeviceEntity d
+        where d.userId in :userIds
+        group by d.userId
+        """
+    )
+    fun countByUserIdIn(@Param("userIds") userIds: Collection<Long>): List<UserIdCountRow>
+}
+
+interface UserIdCountRow {
+    val userId: Long
+    val cnt: Long
 }

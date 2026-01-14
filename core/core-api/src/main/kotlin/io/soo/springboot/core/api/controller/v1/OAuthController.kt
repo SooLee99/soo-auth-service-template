@@ -29,7 +29,6 @@ class OAuthController (
     private val authorizedClientService: OAuth2AuthorizedClientService,
 ){
 
-    // ✅ authorizeUrl
     @GetMapping("/{provider}/authorize-url")
     fun authorizeUrl(
         @PathVariable provider: String,
@@ -51,18 +50,18 @@ class OAuthController (
         authentication: Authentication?,
     ): ApiResponse<LoginSuccessResponseDto> {
         val session = request.getSession(false)
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "No session")
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "세션이 존재하지 않습니다.")
 
         val token = authentication as? OAuth2AuthenticationToken
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authenticated")
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다.")
 
         val sessionId = session.id
 
         // ✅ DB에 저장한 세션-유저 매핑 확인
         val binding = sessionMapService.findActive(sessionId)
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Session revoked or not mapped")
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "세션이 취소되었습니다.")
 
-        // ✅ OAuth2 사용자 정보 파싱(카카오/네이버/구글 공통적으로 안전하게)
+        // ✅ OAuth2 사용자 정보 파싱(카카오/네이버/구글)
         val provider = token.authorizedClientRegistrationId.lowercase()
         val attributes = token.principal.attributes
 

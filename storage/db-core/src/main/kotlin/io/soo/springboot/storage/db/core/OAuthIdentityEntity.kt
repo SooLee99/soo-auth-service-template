@@ -2,6 +2,7 @@ package io.soo.springboot.storage.db.core
 
 import io.soo.springboot.core.enums.AuthProvider
 import jakarta.persistence.*
+import java.time.Instant
 
 @Entity
 @Table(
@@ -15,8 +16,8 @@ import jakarta.persistence.*
     indexes = [Index(name = "idx_oauth_identity_user_id", columnList = "user_id")],
 )
 @AttributeOverride(
-    name = "entityStatus",
-    column = Column(name = "entity_status", columnDefinition = "VARCHAR", nullable = false),
+    name = "status",
+    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false),
 )
 class OAuthIdentityEntity(
 
@@ -29,5 +30,9 @@ class OAuthIdentityEntity(
 
     @Column(name = "provider_user_id", nullable = false, length = 255)
     var providerUserId: String,
+
+    @Lob
+    @Column(name = "raw_attributes_json", columnDefinition = "TEXT")
+    var rawAttributesJson: String? = null,
 
     ) : BaseEntity()
