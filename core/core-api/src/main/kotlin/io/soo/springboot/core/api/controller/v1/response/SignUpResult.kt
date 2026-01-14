@@ -26,6 +26,7 @@ data class SignUpProfile(
     val name: String?,
     val nickname: String?,
     val profileImageUrl: String?,
+    val thumbnailImageUrl: String?,
     val birthDate: LocalDate?,
 )
 

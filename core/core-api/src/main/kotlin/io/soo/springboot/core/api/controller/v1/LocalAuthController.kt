@@ -29,6 +29,7 @@ class LocalAuthController(
             name = req.name,
             nickname = req.nickname,
             profileImageUrl = req.profileImageUrl,
+            thumbnailImageUrl = req.thumbnailImageUrl,
             birthDate = req.birthDate,
         )
         return ApiResponse.success(result)

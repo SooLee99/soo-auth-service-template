@@ -40,6 +40,9 @@ data class SignUpRequest(
     @field:Size(max = 1000, message = "프로필 이미지 URL은 최대 1000자까지 입력할 수 있습니다.")
     val profileImageUrl: String? = null,
 
+    @field:Size(max = 1000, message = "썸네일 이미지 URL은 최대 1000자까지 입력할 수 있습니다.")
+    val thumbnailImageUrl: String? = null,
+
     @field:ValidBirthDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val birthDate: LocalDate? = null,

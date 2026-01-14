@@ -8,6 +8,7 @@ data class AdminUserSummaryDto(
     val email: String?,
     val nickname: String?,
     val profileImageUrl: String?,
+    val thumbnailImageUrl: String?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val providers: List<AuthProvider>,

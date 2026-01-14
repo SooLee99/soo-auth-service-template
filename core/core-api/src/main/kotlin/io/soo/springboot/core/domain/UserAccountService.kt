@@ -42,6 +42,7 @@ class UserAccountService(
                     email = info.email,
                     nickname = info.nickname,
                     profileImageUrl = info.profileImageUrl,
+                    thumbnailImageUrl = info.thumbnailImageUrl,
                 )
             )
 
@@ -75,6 +76,7 @@ class UserAccountService(
         user.email = user.email ?: info.email
         user.nickname = info.nickname ?: user.nickname
         user.profileImageUrl = info.profileImageUrl ?: user.profileImageUrl
+        user.thumbnailImageUrl = info.thumbnailImageUrl ?: user.thumbnailImageUrl
         userAccountRepository.save(user)
 
         return user.id to providerUserId

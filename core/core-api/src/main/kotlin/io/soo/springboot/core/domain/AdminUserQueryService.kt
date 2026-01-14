@@ -67,6 +67,7 @@ class AdminUserQueryService(
                 email = u.email,
                 nickname = u.nickname,
                 profileImageUrl = u.profileImageUrl,
+                thumbnailImageUrl = u.thumbnailImageUrl,
                 createdAt = u.createdAt,
                 updatedAt = u.updatedAt,
                 providers = providersByUserId[u.id].orEmpty(),
@@ -146,13 +147,13 @@ class AdminUserQueryService(
             email = user.email,
             nickname = user.nickname,
             profileImageUrl = user.profileImageUrl,
+            thumbnailImageUrl = user.thumbnailImageUrl,
             createdAt = user.createdAt,
             updatedAt = user.updatedAt,
             identities = identities,
             devices = devices,
             sessions = sessions,
             lastLoginAttempts = attempts,
-            thumbnailImageUrl = "", // TODO: 실제 필드가 있으면 user.thumbnailImageUrl 등으로 매핑
         )
     }
 }

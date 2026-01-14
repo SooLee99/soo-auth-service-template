@@ -35,6 +35,9 @@ class UserAccountEntity(
     @Column(length = 1000)
     var profileImageUrl: String? = null,
 
+    @Column(length = 1000)
+    var thumbnailImageUrl: String? = null,
+
     @Column
     var birthdate: LocalDate? = null,
 

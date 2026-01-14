@@ -33,6 +33,7 @@ class LocalAuthService(
         name: String?,
         nickname: String?,
         profileImageUrl: String?,
+        thumbnailImageUrl: String?,
         birthDate: LocalDate?,
     ): SignUpResult {
 
@@ -49,6 +50,7 @@ class LocalAuthService(
                 name = name,
                 nickname = nickname,
                 profileImageUrl = profileImageUrl,
+                thumbnailImageUrl = thumbnailImageUrl,
                 birthdate = birthDate,
             )
         )
@@ -72,6 +74,7 @@ class LocalAuthService(
                 name = user.name,
                 nickname = user.nickname,
                 profileImageUrl = user.profileImageUrl,
+                thumbnailImageUrl = user.thumbnailImageUrl,
                 birthDate = user.birthdate,
             ),
             credentialStatus = CredentialStatus(
