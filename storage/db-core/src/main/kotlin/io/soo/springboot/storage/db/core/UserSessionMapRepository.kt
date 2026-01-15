@@ -15,21 +15,22 @@ interface UserSessionMapRepository : JpaRepository<UserSessionMapEntity, Long> {
     fun findBySessionId(sessionId: String): UserSessionMapEntity?
 
     fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<UserSessionMapEntity>
+
     @Query(
         """
         select m.sessionId
         from UserSessionMapEntity m
         where m.userId = :userId and m.revokedAt is null
-        """
+        """,
     )
     fun findAllByUserIdAndDeviceIdAndRevokedAtIsNull(userId: Long, deviceId: String): List<UserSessionMapEntity>
     fun findAllByUserIdAndDeviceIdOrderByCreatedAtDesc(userId: Long, deviceId: String): List<UserSessionMapEntity>
     fun findAllByUserIdAndRevokedAtIsNullOrderByCreatedAtDesc(userId: Long): List<UserSessionMapEntity>
 
     /**
-    * ✅ userId별 활성 세션 개수 집계
-    * - revokedAt이 null인 세션만 “활성”
-    */
+     * ✅ userId별 활성 세션 개수 집계
+     * - revokedAt이 null인 세션만 “활성”
+     */
     @Query(
         """
         select s.userId as userId, count(s) as cnt
@@ -37,17 +38,16 @@ interface UserSessionMapRepository : JpaRepository<UserSessionMapEntity, Long> {
         where s.userId in :userIds
           and s.revokedAt is null
         group by s.userId
-        """
+        """,
     )
     fun countActiveByUserIdIn(@Param("userIds") userIds: Collection<Long>): List<UserIdCountRow>
-
 
     @Query(
         """
         select count(s)
         from UserSessionMapEntity s
         where s.userId = :userId and s.revokedAt is null
-        """
+        """,
     )
     fun countActiveByUserId(@Param("userId") userId: Long): Int
 }

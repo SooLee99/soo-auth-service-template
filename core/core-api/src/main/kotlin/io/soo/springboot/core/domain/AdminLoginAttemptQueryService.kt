@@ -1,19 +1,17 @@
 package io.soo.springboot.core.domain
 
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
-
 import io.soo.springboot.core.api.controller.v1.response.AdminLoginAttemptDto
 import io.soo.springboot.core.api.controller.v1.response.AdminLoginAttemptStatsDto
 import io.soo.springboot.core.api.controller.v1.response.KeyCountDto
 import io.soo.springboot.core.api.controller.v1.response.PagedResult
 import io.soo.springboot.core.api.controller.v1.response.toPageMetaDto
-
 import io.soo.springboot.core.enums.AuthProvider
 import io.soo.springboot.storage.db.core.LoginAttemptRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class AdminLoginAttemptQueryService(

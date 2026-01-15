@@ -1,5 +1,9 @@
 package io.soo.springboot.core.enums
 
 enum class AuthProvider {
-    KAKAO, NAVER, GOOGLE, LOCAL, UNKNOWN
+    KAKAO,
+    NAVER,
+    GOOGLE,
+    LOCAL,
+    UNKNOWN,
 }

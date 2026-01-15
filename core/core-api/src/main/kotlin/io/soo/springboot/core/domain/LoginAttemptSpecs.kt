@@ -1,6 +1,5 @@
 package io.soo.springboot.core.domain
 
-
 import io.soo.springboot.core.enums.AuthProvider
 import io.soo.springboot.storage.db.core.LoginAttemptEntity
 import org.springframework.data.jpa.domain.Specification

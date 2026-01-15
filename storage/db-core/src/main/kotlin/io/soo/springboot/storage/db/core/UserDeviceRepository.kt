@@ -27,7 +27,7 @@ interface UserDeviceRepository : JpaRepository<UserDeviceEntity, Long> {
         from UserDeviceEntity d
         where d.userId in :userIds
         group by d.userId
-        """
+        """,
     )
     fun countByUserIdIn(@Param("userIds") userIds: Collection<Long>): List<UserIdCountRow>
 }

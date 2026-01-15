@@ -34,7 +34,7 @@ class LoginAttemptService(
                 userAgent = userAgent,
                 errorCode = errorCode,
                 errorMessage = errorMessage,
-            )
+            ),
         )
     }
 

@@ -12,11 +12,11 @@ import java.time.LocalDateTime
     indexes = [
         Index(name = "idx_local_credential_user", columnList = "user_id"),
         Index(name = "idx_local_credential_lock_until", columnList = "lock_until"),
-    ]
+    ],
 )
 @AttributeOverride(
     name = "status",
-    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false)
+    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false),
 )
 class LocalCredentialEntity(
 
@@ -41,7 +41,7 @@ class LocalCredentialEntity(
     @Column(name = "lock_until")
     var lockUntil: LocalDateTime? = null,
 
-    ) : BaseEntity() {
+) : BaseEntity() {
 
     fun isLocked(now: LocalDateTime = LocalDateTime.now()): Boolean {
         val until = lockUntil ?: return false

@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
-interface LoginAttemptRepository
-    : JpaRepository<LoginAttemptEntity, Long>,
+interface LoginAttemptRepository :
+    JpaRepository<LoginAttemptEntity, Long>,
     JpaSpecificationExecutor<LoginAttemptEntity> {
 
     fun findTop50ByUserIdOrderByCreatedAtDesc(userId: Long): List<LoginAttemptEntity>
@@ -25,7 +25,7 @@ interface LoginAttemptRepository
           and (:userId is null or a.userId = :userId)
           and (:deviceId is null or a.deviceId = :deviceId)
           and (:ip is null or a.ip = :ip)
-        """
+        """,
     )
     fun countAllInRange(
         @Param("from") from: LocalDateTime,
@@ -46,7 +46,7 @@ interface LoginAttemptRepository
           and (:userId is null or a.userId = :userId)
           and (:deviceId is null or a.deviceId = :deviceId)
           and (:ip is null or a.ip = :ip)
-        """
+        """,
     )
     fun countSuccessInRange(
         @Param("from") from: LocalDateTime,
@@ -67,7 +67,7 @@ interface LoginAttemptRepository
           and (:userId is null or a.userId = :userId)
           and (:deviceId is null or a.deviceId = :deviceId)
           and (:ip is null or a.ip = :ip)
-        """
+        """,
     )
     fun countFailureInRange(
         @Param("from") from: LocalDateTime,
@@ -92,7 +92,7 @@ interface LoginAttemptRepository
           and (:ip is null or a.ip = :ip)
         group by a.provider
         order by count(a) desc
-        """
+        """,
     )
     fun groupByProviderInRange(
         @Param("from") from: LocalDateTime,
@@ -118,7 +118,7 @@ interface LoginAttemptRepository
           and (:ip is null or a.ip = :ip)
         group by coalesce(a.errorCode, 'NONE')
         order by count(a) desc
-        """
+        """,
     )
     fun failureGroupByErrorCodeInRange(
         @Param("from") from: LocalDateTime,
@@ -146,7 +146,7 @@ interface LoginAttemptRepository
           and (:ip is null or a.ip = :ip)
         group by a.ip
         order by count(a) desc
-        """
+        """,
     )
     fun topFailedIpsInRange(
         @Param("from") from: LocalDateTime,
@@ -171,7 +171,7 @@ interface LoginAttemptRepository
           and (:ip is null or a.ip = :ip)
         group by a.deviceId
         order by count(a) desc
-        """
+        """,
     )
     fun topFailedDeviceIdsInRange(
         @Param("from") from: LocalDateTime,
@@ -184,8 +184,6 @@ interface LoginAttemptRepository
     ): List<KeyCountRow>
 
     fun findByUserIdOrderByCreatedAtDesc(userId: Long, pageable: Pageable): List<LoginAttemptEntity>
-
-
 }
 
 /**

@@ -15,7 +15,7 @@ interface OAuthIdentityRepository : JpaRepository<OAuthIdentityEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(
         "select o from OAuthIdentityEntity o " +
-                "where o.provider = :provider and o.providerUserId = :providerUserId"
+            "where o.provider = :provider and o.providerUserId = :providerUserId",
     )
     fun lockByProviderAndProviderUserId(
         @Param("provider") provider: AuthProvider,

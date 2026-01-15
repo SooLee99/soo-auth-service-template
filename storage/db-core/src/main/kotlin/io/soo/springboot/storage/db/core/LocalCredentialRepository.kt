@@ -13,5 +13,4 @@ interface LocalCredentialRepository : JpaRepository<LocalCredentialEntity, Long>
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from LocalCredentialEntity c where c.userId = :userId")
     fun lockByUserId(@Param("userId") userId: Long): LocalCredentialEntity?
-
 }

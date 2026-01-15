@@ -37,15 +37,12 @@ abstract class BaseEntity {
         status = EntityStatus.ACTIVE
     }
 
-    fun isActive(): Boolean {
-        return status == EntityStatus.ACTIVE
-    }
-
     fun delete() {
         status = EntityStatus.DELETED
     }
 
-    fun isDeleted(): Boolean {
-        return status == EntityStatus.DELETED
-    }
+    fun isActive(): Boolean = status == EntityStatus.ACTIVE
+    fun isDeleted(): Boolean = status == EntityStatus.DELETED
+
+    fun getEntityStatus(): EntityStatus = status
 }

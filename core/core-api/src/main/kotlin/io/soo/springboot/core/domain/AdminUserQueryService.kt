@@ -37,7 +37,6 @@ class AdminUserQueryService(
         createdFrom: LocalDateTime?,
         createdTo: LocalDateTime?,
     ): PagedResult<AdminUserSummaryDto> {
-
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         val spec = UserAccountSpecs.filter(q, email, nickname, provider, suspended, createdFrom, createdTo)
 

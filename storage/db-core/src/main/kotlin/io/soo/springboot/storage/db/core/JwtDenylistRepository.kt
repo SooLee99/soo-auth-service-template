@@ -8,7 +8,6 @@ import java.time.Instant
 
 interface JwtDenylistRepository : JpaRepository<JwtDenylistEntity, String> {
     fun existsByJti(jti: String): Boolean
-    fun existsByTokenHash(tokenHash: String): Boolean
 
     @Modifying
     @Query("delete from JwtDenylistEntity d where d.expiresAt < :now")

@@ -4,7 +4,7 @@ import io.soo.springboot.core.enums.AuthProvider
 import java.time.LocalDateTime
 
 data class AdminSessionDto(
-    val id: Long,
+    val id: Long?,
     val sessionId: String,
     val userId: Long,
     val deviceId: String,

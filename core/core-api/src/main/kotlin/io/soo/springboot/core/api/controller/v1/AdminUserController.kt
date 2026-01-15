@@ -27,17 +27,14 @@ class AdminUserController(
     fun listUsers(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int,
-
         @RequestParam(required = false) q: String?,
         @RequestParam(required = false) email: String?,
         @RequestParam(required = false) nickname: String?,
         @RequestParam(required = false) provider: AuthProvider?,
         @RequestParam(required = false) suspended: Boolean?,
-
         @RequestParam(required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         createdFrom: LocalDateTime?,
-
         @RequestParam(required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         createdTo: LocalDateTime?,

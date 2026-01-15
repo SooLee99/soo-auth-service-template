@@ -43,7 +43,7 @@ class UserAccountService(
                     nickname = info.nickname,
                     profileImageUrl = info.profileImageUrl,
                     thumbnailImageUrl = info.thumbnailImageUrl,
-                )
+                ),
             )
 
             // 3) oauth_identity 연결 (동시성으로 uq 충돌 가능 → 재시도 처리)
@@ -53,8 +53,8 @@ class UserAccountService(
                         userId = createdOrExisting.id,
                         provider = provider,
                         providerUserId = providerUserId,
-                        rawAttributesJson = request.toString()
-                    )
+                        rawAttributesJson = request.toString(),
+                    ),
                 )
             } catch (_: DataIntegrityViolationException) {
                 // 누군가 동시에 insert 한 경우: 재조회해서 그 userId를 따른다

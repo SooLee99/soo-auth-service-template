@@ -12,13 +12,14 @@ import org.springframework.web.filter.OncePerRequestFilter
 class DevicePolicyFilter(
     private val sessionMapService: UserSessionMapService,
     private val deviceBlockService: DeviceBlockService,
-    private val sessionRepository: FindByIndexNameSessionRepository<out Session>
+    private val sessionRepository: FindByIndexNameSessionRepository<out Session>,
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         val session = req.getSession(false)
         if (session == null) {
-            chain.doFilter(req, res); return
+            chain.doFilter(req, res)
+            return
         }
 
         val sessionId = session.id

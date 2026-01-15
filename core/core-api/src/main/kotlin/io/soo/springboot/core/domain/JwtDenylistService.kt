@@ -23,16 +23,10 @@ class JwtDenylistService(
         expiresAt: Instant?,
         reason: String? = null,
     ) {
-        val exp = expiresAt ?: Instant.now().plusSeconds(60 * 60) // 정책에 맞게 조정
+        val exp = expiresAt ?: Instant.now().plusSeconds(60 * 60)
         val tokenHash = sha256(tokenValue)
 
-        // ✅ jti가 있다면 jti 기준 멱등 처리
         if (!jti.isNullOrBlank() && repo.existsByJti(jti)) return
-
-        // ✅ jti가 없거나, 혹은 동일 토큰이 이미 등록된 경우 멱등 처리
-        if (repo.existsByTokenHash(tokenHash)) return
-
-        // jti가 없다면 내부 키로 hash 기반 jti를 만들어 저장(조회 편의)
         val key = jti?.takeIf { it.isNotBlank() } ?: "HASH:$tokenHash"
 
         repo.save(
@@ -41,7 +35,7 @@ class JwtDenylistService(
                 revokedAt = Instant.now(),
                 expiresAt = exp,
                 reason = reason,
-            )
+            ),
         )
     }
 
@@ -53,7 +47,7 @@ class JwtDenylistService(
         if (!jti.isNullOrBlank() && repo.existsByJti(jti)) return true
 
         val tokenHash = sha256(tokenValue)
-        return repo.existsByTokenHash(tokenHash) || repo.existsByJti("HASH:$tokenHash")
+        return repo.existsByJti("HASH:$tokenHash")
     }
 
     /**

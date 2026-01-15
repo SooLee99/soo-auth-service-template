@@ -3,13 +3,13 @@ package io.soo.springboot.core.domain
 import io.soo.springboot.core.enums.AuthProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.session.Session
 import org.springframework.session.SessionRepository
 import org.springframework.stereotype.Component
-import org.slf4j.LoggerFactory
 
 @Component
 class OAuth2LoginSuccessHandler(
@@ -49,9 +49,9 @@ class OAuth2LoginSuccessHandler(
         val sessionId = session?.id
 
         val deviceId = (
-                (session?.getAttribute(SESSION_DEVICE_ID_KEY) as? String)
-                    ?: request.getHeader(HEADER_DEVICE_ID)
-                )?.takeIf { it.isNotBlank() }
+            (session?.getAttribute(SESSION_DEVICE_ID_KEY) as? String)
+                ?: request.getHeader(HEADER_DEVICE_ID)
+            )?.takeIf { it.isNotBlank() }
 
         val ip = request.remoteAddr
         val ua = request.getHeader("User-Agent")

@@ -7,11 +7,11 @@ import java.time.LocalDateTime
 @Entity
 @Table(
     name = "user_device",
-    uniqueConstraints = [UniqueConstraint(name = "uq_user_device", columnNames = ["user_id", "device_id"])]
+    uniqueConstraints = [UniqueConstraint(name = "uq_user_device", columnNames = ["user_id", "device_id"])],
 )
 @AttributeOverride(
     name = "status",
-    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false)
+    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false),
 )
 class UserDeviceEntity(
 
@@ -40,4 +40,4 @@ class UserDeviceEntity(
     @Column(name = "last_user_agent", length = 1000)
     var lastUserAgent: String? = null,
 
-    ) : BaseEntity()
+) : BaseEntity()

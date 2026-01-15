@@ -1,13 +1,13 @@
 package io.soo.springboot.core.api.controller.v1
 
 import io.soo.springboot.core.api.controller.v1.request.JwtLogoutRequest
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import io.soo.springboot.core.api.controller.v1.request.SignUpRequest
 import io.soo.springboot.core.api.controller.v1.response.SignUpResult
 import io.soo.springboot.core.domain.JwtDenylistService
 import io.soo.springboot.core.domain.LocalAuthService
 import io.soo.springboot.core.support.response.ApiResponse
 import jakarta.validation.Valid
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 class LocalAuthController(
     private val localAuthService: LocalAuthService,
     private val denylist: JwtDenylistService,
-    ) {
+) {
 
     /**
      * ✅ 회원가입

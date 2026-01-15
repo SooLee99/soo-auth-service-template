@@ -7,12 +7,12 @@ import jakarta.persistence.*
 @Table(
     name = "login_attempt",
     indexes = [
-        Index(name = "idx_login_attempt_user_created", columnList = "user_id, created_at")
-    ]
+        Index(name = "idx_login_attempt_user_created", columnList = "user_id, created_at"),
+    ],
 )
 @AttributeOverride(
     name = "status",
-    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false)
+    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false),
 )
 class LoginAttemptEntity(
 
@@ -44,4 +44,4 @@ class LoginAttemptEntity(
     @Column(name = "error_message", length = 2000)
     var errorMessage: String? = null,
 
-    ) : BaseEntity()
+) : BaseEntity()

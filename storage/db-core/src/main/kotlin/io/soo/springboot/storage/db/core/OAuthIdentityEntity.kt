@@ -2,7 +2,6 @@ package io.soo.springboot.storage.db.core
 
 import io.soo.springboot.core.enums.AuthProvider
 import jakarta.persistence.*
-import java.time.Instant
 
 @Entity
 @Table(
@@ -35,4 +34,4 @@ class OAuthIdentityEntity(
     @Column(name = "raw_attributes_json", columnDefinition = "TEXT")
     var rawAttributesJson: String? = null,
 
-    ) : BaseEntity()
+) : BaseEntity()

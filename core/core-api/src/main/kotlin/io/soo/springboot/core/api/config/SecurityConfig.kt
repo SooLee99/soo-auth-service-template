@@ -13,14 +13,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.intercept.AuthorizationFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
 import org.springframework.security.web.context.SecurityContextRepository
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.AndRequestMatcher
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 
 @Configuration
@@ -56,11 +55,6 @@ class SecurityConfig(
             setUserDetailsService(userDetailsService)
             setPasswordEncoder(passwordEncoder)
         }
-
-    @Bean
-    fun jwtDecoder(delegate: JwtDecoder, denylist: JwtDenylistService): JwtDecoder {
-        return RevocationAwareJwtDecoder(delegate, denylist)
-    }
 
     // ✅ 로컬(JSON) 로그인 필터 빈 등록
     @Bean
@@ -132,22 +126,17 @@ class SecurityConfig(
                 it.requestMatchers("/h2-console/**").hasRole("ADMIN")
                 it.anyRequest().authenticated()
             }
-
             // ✅ 폼로그인 비활성화(JSON 로그인 필터 사용)
             .formLogin { it.disable() }
-
             // ✅ OAuth2 로그인
             .oauth2Login { oauth ->
                 oauth.successHandler(oauth2LoginSuccessHandler)
                 oauth.failureHandler(oauth2LoginFailureHandler)
             }
-
             // ✅ 로컬(JSON) 로그인 필터를 UsernamePasswordAuthenticationFilter 위치에 등록
             .addFilterAt(localJsonLoginFilter, UsernamePasswordAuthenticationFilter::class.java)
-
             // ✅ 로그인 이후 요청마다 디바이스 차단/세션 revoke 체크
             .addFilterAfter(devicePolicyFilter, AuthorizationFilter::class.java)
-
             // ✅ 로그아웃
             .logout {
                 it.logoutUrl("/api/v1/auth/logout")

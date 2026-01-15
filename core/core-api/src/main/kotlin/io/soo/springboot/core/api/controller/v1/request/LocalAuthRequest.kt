@@ -16,24 +16,24 @@ data class SignUpRequest(
     val email: String,
 
     @field:NotBlank(message = "비밀번호는 필수입니다.")
-    @field:Size(min = 8, max = 72, message = "비밀번호는 8자 이상 72자 이하로 입력해 주세요.")
+    @field:Size(min = 6, max = 72, message = "비밀번호는 8자 이상 72자 이하로 입력해 주세요.")
     @field:Pattern(
-        regexp = """^(?=.{8,72}$)(?:(?=.*[a-z])(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])|(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])).*$""",
-        message = "비밀번호는 영문 대/소문자, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다."
+        regexp = """^(?=.{6,72}$)(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).*$""",
+        message = "비밀번호는 영문, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다.",
     )
     val password: String,
 
     @field:Size(min = 1, max = 50, message = "이름은 1자 이상 50자 이하로 입력해 주세요.")
     @field:Pattern(
         regexp = """^[가-힣a-zA-Z\s\-\']+$""",
-        message = "이름에는 한글/영문/공백/하이픈(-)/아포스트로피(')만 사용할 수 있습니다."
+        message = "이름에는 한글/영문/공백/하이픈(-)/아포스트로피(')만 사용할 수 있습니다.",
     )
     val name: String? = null,
 
     @field:Size(min = 2, max = 20, message = "닉네임은 2자 이상 20자 이하로 입력해 주세요.")
     @field:Pattern(
         regexp = """^[가-힣a-zA-Z0-9_-]+$""",
-        message = "닉네임에는 한글/영문/숫자/언더스코어(_)/하이픈(-)만 사용할 수 있습니다."
+        message = "닉네임에는 한글/영문/숫자/언더스코어(_)/하이픈(-)만 사용할 수 있습니다.",
     )
     val nickname: String? = null,
 

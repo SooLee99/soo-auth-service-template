@@ -12,11 +12,11 @@ import java.time.LocalDateTime
         Index(name = "idx_user_session_map_user", columnList = "user_id"),
         Index(name = "idx_user_session_map_user_device", columnList = "user_id, device_id"),
         Index(name = "idx_user_session_map_revoked", columnList = "revoked_at"),
-    ]
+    ],
 )
 @AttributeOverride(
     name = "status",
-    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false)
+    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false),
 )
 class UserSessionMapEntity(
 
@@ -42,4 +42,4 @@ class UserSessionMapEntity(
     @Column(name = "revoked_reason", length = 500)
     var revokedReason: String? = null,
 
-    ) : BaseEntity()
+) : BaseEntity()
