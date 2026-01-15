@@ -2,7 +2,7 @@ package io.soo.springboot.core.api.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.soo.springboot.core.domain.*
-import io.soo.springboot.core.DBSessionRevokeLogoutHandler
+import io.soo.springboot.core.domain.DBSessionRevokeLogoutHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order

@@ -7,7 +7,6 @@ import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.session.FindByIndexNameSessionRepository
 import org.springframework.session.Session
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 
 /**
  * ✅ 로그아웃 시
@@ -15,7 +14,7 @@ import java.time.LocalDateTime
  * 2) Spring Session 저장소에서 세션 row 삭제 (즉시 무효화)
  */
 @Component
-class DbSessionRevokeLogoutHandler(
+class DBSessionRevokeLogoutHandler(
     private val sessionRepository: FindByIndexNameSessionRepository<out Session>,
     private val sessionMapService: io.soo.springboot.core.domain.UserSessionMapService,
 ) : LogoutHandler {
