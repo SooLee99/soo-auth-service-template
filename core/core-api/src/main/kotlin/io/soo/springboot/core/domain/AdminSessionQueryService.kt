@@ -28,17 +28,21 @@ class AdminSessionQueryService(
         }
 
         return sessions.map {
-            AdminSessionDto(
-                id = it.id,
-                sessionId = it.sessionId,
-                userId = it.userId,
-                deviceId = it.deviceId,
-                provider = it.provider,
-                createdAt = it.createdAt,
-                lastAccessedAt = it.lastAccessedAt,
-                revokedAt = it.revokedAt,
-                revokedReason = it.revokedReason,
-            )
+            it.id?.let { id ->
+                it.createdAt?.let { createdAt ->
+                    AdminSessionDto(
+                        id = id,
+                        sessionId = it.sessionId,
+                        userId = it.userId,
+                        deviceId = it.deviceId,
+                        provider = it.provider,
+                        createdAt = createdAt,
+                        lastAccessedAt = it.lastAccessedAt,
+                        revokedAt = it.revokedAt,
+                        revokedReason = it.revokedReason,
+                    )
+                }
+            } as AdminSessionDto
         }
     }
 
@@ -51,12 +55,12 @@ class AdminSessionQueryService(
             ?: throw NoSuchElementException("Session not found: $sessionId")
 
         return AdminSessionDto(
-            id = s.id,
+            id = requireNotNull(s.id) { "user_session_map.id is null" },
             sessionId = s.sessionId,
             userId = s.userId,
             deviceId = s.deviceId,
             provider = s.provider,
-            createdAt = s.createdAt,
+            createdAt = requireNotNull(s.createdAt) { "user_session_map.createdAt is null" },
             lastAccessedAt = s.lastAccessedAt,
             revokedAt = s.revokedAt,
             revokedReason = s.revokedReason,

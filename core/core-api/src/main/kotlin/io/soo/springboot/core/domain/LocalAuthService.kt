@@ -35,7 +35,7 @@ class LocalAuthService(
         profileImageUrl: String?,
         thumbnailImageUrl: String?,
         birthDate: LocalDate?,
-    ): SignUpResult {
+    ): SignUpResult? {
 
         // 1) 이메일 중복 검사 (LOCAL 가입은 이메일이 고유 식별자 역할)
         if (userAccountRepository.findByEmail(email) != null) {
@@ -56,17 +56,22 @@ class LocalAuthService(
         )
 
         // 3) 로컬 자격 증명 저장
-        val credential = localCredentialRepository.save(
-            LocalCredentialEntity(
-                userId = user.id,
-                passwordHash = passwordEncoder.encode(rawPassword),
-                passwordUpdatedAt = LocalDateTime.now(),
+        val credential = user.id?.let {
+            localCredentialRepository.save(
+                LocalCredentialEntity(
+                    userId = it,
+                    passwordHash = passwordEncoder.encode(rawPassword),
+                    passwordUpdatedAt = LocalDateTime.now(),
+                )
             )
-        )
+        }
 
         // 4) 반환값: 가입 완료 후 화면/클라이언트에서 바로 쓸 수 있도록 "공용 정보" 중심으로 구성
+        val userId = requireNotNull(user.id) { "user.id is null (save failed or mapping issue)" }
+        val createdAt = requireNotNull(user.createdAt) { "user.createdAt is null (timestamp mapping issue)" }
+        val c = requireNotNull(credential) { "local credential is null (unexpected state)" }
         return SignUpResult(
-            userId = user.id,
+            userId = userId,
             email = email,
             emailVerified = user.emailVerified,
             provider = AuthProvider.LOCAL,
@@ -78,11 +83,12 @@ class LocalAuthService(
                 birthDate = user.birthdate,
             ),
             credentialStatus = CredentialStatus(
-                passwordUpdatedAt = credential.passwordUpdatedAt,
-                failedLoginCount = credential.failedLoginCount,
-                lockUntil = credential.lockUntil,
+                passwordUpdatedAt = c.passwordUpdatedAt,
+                failedLoginCount = c.failedLoginCount,
+                lockUntil = c.lockUntil,
             ),
-            createdAt = user.createdAt,
+            createdAt = createdAt,
         )
+
     }
 }

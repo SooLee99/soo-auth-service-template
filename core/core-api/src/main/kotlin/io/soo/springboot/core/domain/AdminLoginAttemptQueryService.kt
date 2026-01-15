@@ -32,25 +32,29 @@ class AdminLoginAttemptQueryService(
         errorCode: String?,
         from: LocalDateTime?,
         to: LocalDateTime?,
-    ): PagedResult<AdminLoginAttemptDto> {
+    ): PagedResult<AdminLoginAttemptDto?> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         val spec = LoginAttemptSpecs.filter(success, provider, userId, deviceId, ip, errorCode, from, to)
 
         val p = loginAttemptRepository.findAll(spec, pageable)
         val items = p.content.map {
-            AdminLoginAttemptDto(
-                id = it.id,
-                success = it.success,
-                provider = it.provider,
-                userId = it.userId,
-                providerUserId = it.providerUserId,
-                deviceId = it.deviceId,
-                ip = it.ip,
-                userAgent = it.userAgent,
-                errorCode = it.errorCode,
-                errorMessage = it.errorMessage,
-                createdAt = it.createdAt,
-            )
+            it.id?.let { id ->
+                it.createdAt?.let { createdAt ->
+                    AdminLoginAttemptDto(
+                        id = id,
+                        success = it.success,
+                        provider = it.provider,
+                        userId = it.userId,
+                        providerUserId = it.providerUserId,
+                        deviceId = it.deviceId,
+                        ip = it.ip,
+                        userAgent = it.userAgent,
+                        errorCode = it.errorCode,
+                        errorMessage = it.errorMessage,
+                        createdAt = createdAt,
+                    )
+                }
+            }
         }
 
         return PagedResult(items = items, page = p.toPageMetaDto())
@@ -61,23 +65,27 @@ class AdminLoginAttemptQueryService(
      * - 운영 UI에서 목록 클릭 → 상세 팝업/페이지에 사용
      */
     @Transactional(readOnly = true)
-    fun getLoginAttempt(attemptId: Long): AdminLoginAttemptDto {
+    fun getLoginAttempt(attemptId: Long): AdminLoginAttemptDto? {
         val a = loginAttemptRepository.findById(attemptId)
             .orElseThrow { NoSuchElementException("LoginAttempt not found: $attemptId") }
 
-        return AdminLoginAttemptDto(
-            id = a.id,
-            success = a.success,
-            provider = a.provider,
-            userId = a.userId,
-            providerUserId = a.providerUserId,
-            deviceId = a.deviceId,
-            ip = a.ip,
-            userAgent = a.userAgent,
-            errorCode = a.errorCode,
-            errorMessage = a.errorMessage,
-            createdAt = a.createdAt,
-        )
+        return a.createdAt?.let {
+            a.id?.let { id ->
+                AdminLoginAttemptDto(
+                    id = id,
+                    success = a.success,
+                    provider = a.provider,
+                    userId = a.userId,
+                    providerUserId = a.providerUserId,
+                    deviceId = a.deviceId,
+                    ip = a.ip,
+                    userAgent = a.userAgent,
+                    errorCode = a.errorCode,
+                    errorMessage = a.errorMessage,
+                    createdAt = it,
+                )
+            }
+        }
     }
 
     /**
@@ -156,25 +164,26 @@ class AdminLoginAttemptQueryService(
      */
     @Transactional(readOnly = true)
     fun recentByUser(userId: Long, size: Int): List<AdminLoginAttemptDto> {
-        val safeSize = size.coerceIn(1, 200) // 과도한 조회 방지(원하는 정책으로 조정)
+        val safeSize = size.coerceIn(1, 200)
         val pageable = PageRequest.of(0, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"))
 
         val list = loginAttemptRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
 
-        return list.map {
+        return list.map { e ->
             AdminLoginAttemptDto(
-                id = it.id,
-                success = it.success,
-                provider = it.provider,
-                userId = it.userId,
-                providerUserId = it.providerUserId,
-                deviceId = it.deviceId,
-                ip = it.ip,
-                userAgent = it.userAgent,
-                errorCode = it.errorCode,
-                errorMessage = it.errorMessage,
-                createdAt = it.createdAt,
+                id = requireNotNull(e.id) { "login_attempt.id is null" },
+                success = e.success,
+                provider = e.provider,
+                userId = e.userId,
+                providerUserId = e.providerUserId,
+                deviceId = e.deviceId,
+                ip = e.ip,
+                userAgent = e.userAgent,
+                errorCode = e.errorCode,
+                errorMessage = e.errorMessage,
+                createdAt = requireNotNull(e.createdAt) { "login_attempt.createdAt is null" },
             )
         }
     }
+
 }
