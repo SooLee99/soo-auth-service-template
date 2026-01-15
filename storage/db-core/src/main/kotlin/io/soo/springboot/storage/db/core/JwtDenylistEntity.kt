@@ -14,11 +14,11 @@ import java.time.Instant
         UniqueConstraint(name = "uq_jwt_denylist_jti", columnNames = ["jti"])
     ]
 )
-@AttributeOverride(
-    name = "status",
-    column = Column(name = "status", columnDefinition = "VARCHAR", nullable = false)
-)
 class JwtDenylistEntity(
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
 
     /**
      * ✅ JWT ID (jti)
@@ -44,4 +44,4 @@ class JwtDenylistEntity(
      */
     @Column(name = "reason", nullable = true, length = 500)
     var reason: String? = null,
-) : BaseEntity()
+)

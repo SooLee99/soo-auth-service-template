@@ -22,7 +22,7 @@ class UserAccountService(
     }
 
     @Transactional
-    fun upsertFromOAuth2(token: OAuth2AuthenticationToken, request: HttpServletRequest): Pair<Long?, String>? {
+    fun upsertFromOAuth2(token: OAuth2AuthenticationToken, request: HttpServletRequest): Pair<Long, String> {
         val info = extractUserInfo(token)
         val provider = info.provider
         val providerUserId = info.providerUserId.trim().take(MAX_PROVIDER_USER_ID)
@@ -30,7 +30,7 @@ class UserAccountService(
         // 1) oauth_identity 먼저 찾기 (락 걸면 더 안전)
         val existingIdentity = oauthIdentityRepository.lockByProviderAndProviderUserId(provider, providerUserId)
 
-        val user: UserAccountEntity? = if (existingIdentity != null) {
+        val user: UserAccountEntity = if (existingIdentity != null) {
             userAccountRepository.findById(existingIdentity.userId).orElseThrow {
                 IllegalStateException("oauth_identity.userId=${existingIdentity.userId} not found")
             }
@@ -48,16 +48,14 @@ class UserAccountService(
 
             // 3) oauth_identity 연결 (동시성으로 uq 충돌 가능 → 재시도 처리)
             val identity = try {
-                createdOrExisting.id?.let {
-                    oauthIdentityRepository.save(
-                        OAuthIdentityEntity(
-                            userId = it,
-                            provider = provider,
-                            providerUserId = providerUserId,
-                            rawAttributesJson = request.toString()
-                        )
+                oauthIdentityRepository.save(
+                    OAuthIdentityEntity(
+                        userId = createdOrExisting.id,
+                        provider = provider,
+                        providerUserId = providerUserId,
+                        rawAttributesJson = request.toString()
                     )
-                }
+                )
             } catch (_: DataIntegrityViolationException) {
                 // 누군가 동시에 insert 한 경우: 재조회해서 그 userId를 따른다
                 oauthIdentityRepository.lockByProviderAndProviderUserId(provider, providerUserId)
@@ -65,28 +63,23 @@ class UserAccountService(
             }
 
             // 만약 경쟁 상황에서 다른 userId로 매핑이 먼저 생겼다면 그 쪽을 최종 사용자로 선택
-            identity?.let {
-                if (it.userId != createdOrExisting.id) {
-                    userAccountRepository.findById(identity.userId).orElseThrow {
-                        IllegalStateException("oauth_identity.userId=${identity.userId} not found")
-                    }
-                } else {
-                    createdOrExisting
+            if (identity.userId != createdOrExisting.id) {
+                userAccountRepository.findById(identity.userId).orElseThrow {
+                    IllegalStateException("oauth_identity.userId=${identity.userId} not found")
                 }
+            } else {
+                createdOrExisting
             }
         }
 
         // 4) 최신 프로필 업데이트 (null이면 기존 값 유지)
-        user?.let { it.email = user.email ?: info.email }
-        user?.let { it.nickname = info.nickname ?: user.nickname }
-        user?.let { it.profileImageUrl = info.profileImageUrl ?: user.profileImageUrl }
-        user?.let { it.thumbnailImageUrl = info.thumbnailImageUrl ?: user.thumbnailImageUrl }
+        user.email = user.email ?: info.email
+        user.nickname = info.nickname ?: user.nickname
+        user.profileImageUrl = info.profileImageUrl ?: user.profileImageUrl
+        user.thumbnailImageUrl = info.thumbnailImageUrl ?: user.thumbnailImageUrl
         userAccountRepository.save(user)
 
-        if (user != null) {
-            return user.id to providerUserId
-        }
-        return null
+        return user.id to providerUserId
     }
 
     fun extractUserInfo(token: OAuth2AuthenticationToken): OAuthUserInfo {

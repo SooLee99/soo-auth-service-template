@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 interface UserAccountRepository : JpaRepository<UserAccountEntity, Long>, JpaSpecificationExecutor<UserAccountEntity> {
     fun findByEmail(email: String): UserAccountEntity?
-    fun save(entity: io.soo.springboot.storage.db.core.UserAccountEntity?) {}
 }

@@ -14,7 +14,8 @@ class LocalLoginPolicyService(
     @Transactional
     fun recordFailureByEmail(normalizedEmail: String, now: LocalDateTime = LocalDateTime.now()): FailureResult {
         val user = userAccountRepository.findByEmail(normalizedEmail) ?: return FailureResult.NOT_FOUND
-        val cred = user.id?.let { localCredentialRepository.lockByUserId(it) } ?: return FailureResult.NOT_FOUND
+
+        val cred = localCredentialRepository.lockByUserId(user.id) ?: return FailureResult.NOT_FOUND
 
         // ✅ 실패 기록(잠금 중이면 now+1분 갱신 포함)
         cred.recordLoginFailure(

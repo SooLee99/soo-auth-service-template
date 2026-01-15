@@ -16,19 +16,19 @@ class AdminDeviceQueryService(
      */
     @Transactional(readOnly = true)
     fun listUserDevices(userId: Long): List<AdminUserDeviceDto> {
-        return userDeviceRepository.findAllByUserId(userId).map { e ->
+        return userDeviceRepository.findAllByUserId(userId).map {
             AdminUserDeviceDto(
-                id = requireNotNull(e.id) { "user_device.id is null" },
-                userId = e.userId,
-                deviceId = e.deviceId,
-                status = e.deviceStatus,
-                blockedReason = e.blockedReason,
-                blockedAt = e.blockedAt,
-                lastLoginAt = e.lastLoginAt,
-                lastIp = e.lastIp,
-                lastUserAgent = e.lastUserAgent,
-                createdAt = requireNotNull(e.createdAt) { "user_device.createdAt is null" },
-                updatedAt = requireNotNull(e.updatedAt) { "user_device.updatedAt is null" },
+                id = it.id,
+                userId = it.userId,
+                deviceId = it.deviceId,
+                status = it.deviceStatus,
+                blockedReason = it.blockedReason,
+                blockedAt = it.blockedAt,
+                lastLoginAt = it.lastLoginAt,
+                lastIp = it.lastIp,
+                lastUserAgent = it.lastUserAgent,
+                createdAt = it.createdAt,
+                updatedAt = it.updatedAt,
             )
         }
     }

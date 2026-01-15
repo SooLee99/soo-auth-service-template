@@ -1,49 +1,51 @@
 package io.soo.springboot.storage.db.core
 
 import io.soo.springboot.core.enums.EntityStatus
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.Version
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-        protected set
+    val id: Long = 0
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(nullable = false)
     var version: Long = 0
-        protected set
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "entity_status", nullable = false, length = 20)
-    protected var status: EntityStatus = EntityStatus.ACTIVE
-        protected set
+    @Column(columnDefinition = "VARCHAR")
+    private var status: EntityStatus = EntityStatus.ACTIVE
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    var createdAt: LocalDateTime? = null
-        protected set
+    val createdAt: LocalDateTime = LocalDateTime.MIN
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime? = null
-        protected set
+    val updatedAt: LocalDateTime = LocalDateTime.MIN
 
-    fun activate() {
+    fun active() {
         status = EntityStatus.ACTIVE
+    }
+
+    fun isActive(): Boolean {
+        return status == EntityStatus.ACTIVE
     }
 
     fun delete() {
         status = EntityStatus.DELETED
     }
 
-    fun isActive(): Boolean = status == EntityStatus.ACTIVE
-    fun isDeleted(): Boolean = status == EntityStatus.DELETED
-
-    fun getEntityStatus(): EntityStatus = status
+    fun isDeleted(): Boolean {
+        return status == EntityStatus.DELETED
+    }
 }
